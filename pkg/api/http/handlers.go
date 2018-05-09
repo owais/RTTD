@@ -14,9 +14,6 @@ import (
 	_ "github.com/owais/RTTD/static" // bundle assets
 )
 
-var port string
-var slackToken string
-
 type handler func(t teams.Team, w http.ResponseWriter, r *http.Request)
 
 func withTeams(team teams.Team, f handler) http.HandlerFunc {
@@ -69,13 +66,12 @@ func fetchFromSlack(t teams.Team, w http.ResponseWriter, r *http.Request) {
 	w.Write(contents)
 }
 
-func Start(team teams.Team) {
+func Start(team teams.Team, port string) {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(parcello.Root("/"))))
 
 	http.HandleFunc("/api/slack/fetch/", withTeams(team, fetchFromSlack))
 	http.HandleFunc("/", withTeams(team, indexHandler))
 
-	port = "5000"
 	fmt.Println("Starting server on port " + port)
 	http.ListenAndServe(":"+port, nil)
 }

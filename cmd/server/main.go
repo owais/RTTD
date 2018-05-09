@@ -14,6 +14,7 @@ import (
 func main() {
 
 	var slackToken string
+	var port string
 
 	app := cli.NewApp()
 	app.Name = "RTTD"
@@ -27,6 +28,13 @@ func main() {
 			Destination: &slackToken,
 			EnvVar:      "SLACK_API_TOKEN",
 		},
+		cli.StringFlag{
+			Name:        "port",
+			Usage:       "PORT to start web server on",
+			Destination: &port,
+			EnvVar:      "PORT",
+			Value:       "5000",
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -35,7 +43,7 @@ func main() {
 		}
 		endpoint := "https://slack.com/api/users.list?token=" + slackToken
 		team := slack.NewTeam(endpoint)
-		http.Start(team)
+		http.Start(team, port)
 		return nil
 
 	}
