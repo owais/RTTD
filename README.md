@@ -36,7 +36,7 @@ https://<app-name>.herokuapp.com/ | https://git.heroku.com/<app-name>.git
 ```
 
 ### Provide access to Slack
-Now generate a [Slack API Token](https://get.slack.help/hc/en-us/articles/215770388-Creating-and-regenerating-API-tokens) and add it as an environment variable aka config variable to your heroku app from the heroku dashboard. Variable name should be `SLACK_API_TOKEN`. An alternative to this is to change append `--slack-api-token="<api-token>` to the web command in Procfile below.
+Now generate a [Slack API Token](https://get.slack.help/hc/en-us/articles/215770388-Creating-and-regenerating-API-tokens) and add it as an environment variable aka config variable to your heroku app from the heroku dashboard. Variable name should be `SLACK_API_TOKEN`. An alternative to this is to append `--slack-api-token="<api-token>` to the web command in Procfile below.
 
 ### Deploy Heroku app
 ```
