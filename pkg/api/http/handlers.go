@@ -3,15 +3,15 @@ package http
 import (
 	"fmt"
 	"html/template"
+	"io/fs"
 	"io/ioutil"
+	"log"
 	"net/http"
-
-	"github.com/phogolabs/parcello"
 
 	"github.com/owais/RTTD/pkg/teams"
 	"github.com/owais/RTTD/pkg/ui/web"
 
-	_ "github.com/owais/RTTD/static" // bundle assets
+	"github.com/owais/RTTD/static" // bundle assets
 )
 
 type handler func(t teams.Team, w http.ResponseWriter, r *http.Request)
@@ -28,7 +28,7 @@ func indexHandler(t teams.Team, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, err := parcello.Open("index.html")
+	file, err := static.Files.Open("files/index.html")
 	if err != nil {
 		http.Error(w, "Error finding template", 500)
 		return
@@ -67,7 +67,11 @@ func fetchFromSlack(t teams.Team, w http.ResponseWriter, r *http.Request) {
 }
 
 func Start(team teams.Team, port string) {
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(parcello.Root("/"))))
+	staticFS, err := fs.Sub(static.Files, "files")
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))))
 
 	http.HandleFunc("/api/slack/fetch/", withTeams(team, fetchFromSlack))
 	http.HandleFunc("/", withTeams(team, indexHandler))

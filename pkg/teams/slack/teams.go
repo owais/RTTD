@@ -3,6 +3,7 @@ package slack
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -35,6 +36,8 @@ func (t *Team) Fetch() ([]byte, error) {
 func (t *Team) Refresh() error {
 	// response, err := ioutil.ReadFile("users.json")
 	response, err := t.Fetch()
+
+	fmt.Println(string(response))
 
 	if err != nil {
 		return err

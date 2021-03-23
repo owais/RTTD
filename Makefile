@@ -1,7 +1,7 @@
 .PHONY: build install test run lint vet restart kill watch
 
 pid = /tmp/RTTD.pid
-run_cmd = ./build/timezones
+run_cmd = ./build/rttd_darwin
 
 VERSION ?= $(shell git tag | tail -1)
 
@@ -9,19 +9,19 @@ LEVEL ?= development
 
 ld_flags = -ldflags="-X 'main.version=$(version)'"
 
-all: install build
+all: install-tools deps build
 
-install:
-	go get github.com/golang/dep/cmd/dep
-	go get github.com/phogolabs/parcello
-	go install github.com/phogolabs/parcello/cmd/parcello
+deps:
+	go mod download
+
+install-tools:
+	go get github.com/goplusjs/gopherjs
 	@echo "\n======\nNote: https://github.com/emcrisostomo/fswatch is required to use 'make watch'\n======\n"
 	@echo "Done! Run 'make watch' or 'make run'"
 
 build: clean
 	@echo "building..."
-	@gopherjs build -m -o static/main.js ./cmd/frontend/
-	@go generate ./...
+	@gopherjs build -m -o static/files/main.js ./cmd/frontend/
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/rttd_linux $(ld_flags) ./cmd/server
 	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o build/rttd_darwin $(ld_flags) ./cmd/server
 
